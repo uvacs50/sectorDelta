@@ -8,10 +8,15 @@ from flask import Flask, request, render_template
 import plotly.graph_objects as go
 import cufflinks as cf
 import asyncio
+import aiohttp
+import concurrent.futures
+import time
 
 cf.go_offline()
 
 s = Session()
+
+
 # df = yf.download("AAPL", start = "2021-01-01", end = "2021-05-30")
 # print(df)
 dark_palette = {}
@@ -69,6 +74,7 @@ def get_data(ticker: str, interval: str, session: Session, bars_back: int = 200)
     r = session.get(f"https://api.binance.com/api/v3/klines?symbol={ticker}&interval={interval}&limit={bars_back}")
     data = r.json()
 
+
     # extract necessary data
     data = [sub[0:5] for sub in data]
     
@@ -96,6 +102,10 @@ def get_data(ticker: str, interval: str, session: Session, bars_back: int = 200)
     return df
 
 
+
+
+
+
 def get_basket_data(basket: str, counter: str, interval: str, session: Session, bars_back: int = 500) -> pd.DataFrame:
     """ This function will return a Pandas Dataframe
         Containing the OHLC data of a basket ticker
@@ -114,15 +124,14 @@ def get_basket_data(basket: str, counter: str, interval: str, session: Session, 
     assert counter in get_existing_tickers()
 
     # get data
-    data = {}
-    prices = []
-    for ticker in sectors[basket]:
-        data[ticker] = get_data(ticker, interval, session, bars_back)
+    # Use concurrent.futures for parallel processing
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        data = {ticker: executor.submit(get_data, ticker, interval, session, bars_back) for ticker in sectors[basket]}
+        data[counter] = executor.submit(get_data, counter, interval, session, bars_back)
 
-
-    # get data from the counter asset
-    data[counter] = get_data(counter, interval, session, bars_back)
-    # print(data)
+    # Wait for all tasks to complete and retrieve the results
+    for ticker, result in data.items():
+        data[ticker] = result.result()
 
     # start with first tickers dataframe
     first_in_sector = sectors[basket][0]
@@ -147,8 +156,7 @@ def get_basket_data(basket: str, counter: str, interval: str, session: Session, 
 
     # Take the (1/len(data))th root of each column to complete the formula
     combined_df = combined_df ** (1 / len(sectors[basket]))
-    print(1 / len(sectors[basket]))
-    print(prices)
+
 
     # then divide by the counter asset
     combined_df['open'] /= data[counter]['open']
@@ -160,6 +168,7 @@ def get_basket_data(basket: str, counter: str, interval: str, session: Session, 
 
 # df = get_basket_data("L1", "BTCUSDT", "15m")
 # print(df)
+
 
 
 def plot_chart(df: pd.DataFrame):
@@ -254,6 +263,7 @@ def basket():
         default_interval = '1h'
         default_bars_back = 500
 
+
         df = get_basket_data(basket= default_basket, counter = default_counter, session = s, interval = default_interval,
                     bars_back= default_bars_back)
         
@@ -278,6 +288,7 @@ def basket():
 
         # Create a sample DataFrame (replace this with your data)
         # Default values or user-selected options from the form
+        t1 = int(time.time())*1000
         default_basket = "L1"
         default_counter = "BTCUSDT"
         default_interval = '1h'
@@ -310,17 +321,14 @@ def basket():
         # Convert the Plotly figure to an HTML div
         chart_div = go.Figure(figure).to_html(full_html=False)
 
+        t2 = int(time.time())*1000
+        print(f"TIME: {t2-t1}ms")
+
 
         return render_template('basket.html', chart_div=chart_div, selected_basket = selected_basket, 
                                selected_counter = selected_counter, selected_bars_back = selected_bars_back)
 
 
 
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    app.run(debug=True)
