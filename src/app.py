@@ -263,6 +263,3 @@ def basket():
                                selected_counter = chart.counter, selected_bars_back = chart.bars_back)
     
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
