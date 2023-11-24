@@ -2,41 +2,13 @@ import requests
 from requests import Session
 import pandas as pd
 import cufflinks as cf
-import yfinance as yf
 import datetime
 from flask import Flask, request, render_template
 import plotly.graph_objects as go
 import cufflinks as cf
-import asyncio
-import aiohttp
 import concurrent.futures
 import time
-
-cf.go_offline()
-
-s = Session()
-
-
-# df = yf.download("AAPL", start = "2021-01-01", end = "2021-05-30")
-# print(df)
-dark_palette = {}
-dark_palette["bg_color"] = "#2e2e2e"
-dark_palette["plot_bg_color"] = "#2e2e2e"
-dark_palette["grid_color"] = "#595656"
-dark_palette["text_color"] = "#ffffff"
-dark_palette["dark_candle"] = "#226287"
-dark_palette["light_candle"] = "#a6a4a4"
-dark_palette["volume_color"] = "#5c285b"
-dark_palette["border_color"] = "#ffffff"
-dark_palette["color_1"] = "#5c285b"
-dark_palette["color_2"] = "#802c62"
-dark_palette["color_3"] = "#a33262"
-dark_palette["color_4"] = "#c43d5c"
-dark_palette["color_5"] = "#de4f51"
-dark_palette["color_6"] = "#f26841"
-dark_palette["color_7"] = "#fd862b"
-dark_palette["color_8"] = "#ffa600"
-dark_palette["color_9"] = "#3366d6"
+from classes import *
 
 
 
@@ -191,29 +163,22 @@ def index():
 @app.route('/chart', methods=["GET", "POST"])
 def chart():
     if request.method == "GET":
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
+
         default_ticker = "BTCUSDT"
         default_interval = '1h'
         default_bars_back = 200
 
-        df = get_data(ticker= default_ticker, session = s, interval = default_interval,
-                    bars_back= default_bars_back)
+        chart = SimpleChart(default_ticker, default_interval, default_bars_back)
         
-        # Create a QuantFig chart
-        qf = cf.QuantFig(df, title=f"{default_ticker}", name=default_ticker)
+        # Obtain the dataframe
+        chart.get_data()
 
-        # Add EMA with a specific color for the dark theme
-        qf.add_ema(periods=36, column='close', color='#1E90FF')  # Use a shade of blue
+        # Get the chart html        
+        chart.get_chart_html()
 
-        # Convert the Cufflinks chart to a Plotly figure
-        figure = qf.figure()
 
-        # Convert the Plotly figure to an HTML div
-        chart_div = go.Figure(figure).to_html(full_html=False)
-
-        return render_template('chart.html', chart_div=chart_div, selected_ticker = default_ticker, 
-                               selected_bars_back = default_bars_back, selected_interval = default_interval)
+        return render_template('chart.html', chart_div=chart.html, selected_ticker = chart.ticker, 
+                               selected_bars_back = chart.bars_back, selected_interval = chart.interval)
     
     else:
 
@@ -228,28 +193,17 @@ def chart():
         selected_interval = request.form.get('interval', default_interval)
         selected_bars_back = int(request.form.get('bars_back', default_bars_back))
 
-        df = get_basket_data(basket= selected_ticker, session = s, interval = selected_interval,
-                    bars_back= selected_bars_back)
+        chart = SimpleChart(selected_ticker, selected_interval, selected_bars_back)
         
+        # Obtain the dataframe
+        chart.get_data()
 
-        # Create a QuantFig chart
-        # Create a QuantFig chart
-        qf = cf.QuantFig(df, title=f"{selected_ticker}", name=selected_ticker)
-
-        # Add EMA with a specific color for the dark theme
-        qf.add_ema(periods=36, column='close', color='#1E90FF')  # Use a shade of blue
-
-        # Convert the Cufflinks chart to a Plotly figure
-        figure = qf.figure()
+        # Get the chart html        
+        chart.get_chart_html()
 
 
-        # Convert the Plotly figure to an HTML div
-        chart_div = go.Figure(figure).to_html(full_html=False)
-
-
-
-        return render_template('chart.html', chart_div=chart_div, selected_ticker = selected_ticker, 
-                               selected_bars_back = selected_bars_back, selected_interval = selected_interval)
+        return render_template('chart.html', chart_div=chart.html, selected_ticker = chart.ticker, 
+                               selected_bars_back = chart.bars_back, selected_interval = chart.interval)
 
 
 @app.route('/basket', methods=["GET", "POST"])
@@ -261,38 +215,30 @@ def basket():
         default_basket = "L1"
         default_counter = "BTCUSDT"
         default_interval = '1h'
-        default_bars_back = 500
+        default_bars_back = 200
 
+        # Initialize chart
+        chart = SimpleBasketChart(default_basket, default_counter, default_interval, default_bars_back)
 
-        df = get_basket_data(basket= default_basket, counter = default_counter, session = s, interval = default_interval,
-                    bars_back= default_bars_back)
+        # Get basket chart data
+        chart.get_basket_data()
         
+        # Get chart html
+        chart.get_chart_html()
 
-        # Create a QuantFig chart
-        # Create a QuantFig chart
-        qf = cf.QuantFig(df, title=f"{default_basket} / {default_counter}", name=default_basket)
-
-        # Add EMA with a specific color for the dark theme
-        qf.add_ema(periods=36, column='close', color='#1E90FF')  # Use a shade of blue
-
-        # Convert the Cufflinks chart to a Plotly figure
-        figure = qf.figure()
-
-        # Convert the Plotly figure to an HTML div
-        chart_div = go.Figure(figure).to_html(full_html=False)
-
-        return render_template('basket.html', chart_div=chart_div, selected_basket = default_basket, 
-                               selected_counter = default_counter, selected_bars_back = default_bars_back)
+        return render_template('basket.html', chart_div=chart.html, selected_basket = chart.basket, 
+                               selected_counter = chart.counter, selected_bars_back = chart.bars_back)
     
     else:
 
         # Create a sample DataFrame (replace this with your data)
         # Default values or user-selected options from the form
         t1 = int(time.time())*1000
+
         default_basket = "L1"
         default_counter = "BTCUSDT"
         default_interval = '1h'
-        default_bars_back = 500
+        default_bars_back = 200
 
         # Get user-selected options from the form
         selected_basket = request.form.get('basket', default_basket)
@@ -300,34 +246,22 @@ def basket():
         selected_interval = request.form.get('interval', default_interval)
         selected_bars_back = int(request.form.get('bars_back', default_bars_back))
 
-        df = get_basket_data(basket= selected_basket, counter = selected_counter, session = s, interval = selected_interval,
-                    bars_back= selected_bars_back)
+        # Initialize chart
+        chart = SimpleBasketChart(selected_basket, selected_counter, selected_interval, selected_bars_back)
+
+        # Get basket chart data
+        chart.get_basket_data()
         
-
-        # Create a QuantFig chart
-        # Create a QuantFig chart
-        qf = cf.QuantFig(df, title=f"{selected_basket} / {selected_counter}", name=selected_basket)
-
-        # Add EMA with a specific color for the dark theme
-        qf.add_ema(periods=36, column='close', color='#1E90FF')  # Use a shade of blue
-
-        # Convert the Cufflinks chart to a Plotly figure
-        figure = qf.figure()
-
-
-        # Convert the Plotly figure to an HTML div
-        chart_div = go.Figure(figure).to_html(full_html=False)
-
-        # Convert the Plotly figure to an HTML div
-        chart_div = go.Figure(figure).to_html(full_html=False)
+        # Get chart html
+        chart.get_chart_html()
 
         t2 = int(time.time())*1000
         print(f"TIME: {t2-t1}ms")
 
 
-        return render_template('basket.html', chart_div=chart_div, selected_basket = selected_basket, 
-                               selected_counter = selected_counter, selected_bars_back = selected_bars_back)
-
+        return render_template('basket.html', chart_div=chart.html, selected_basket = chart.basket, 
+                               selected_counter = chart.counter, selected_bars_back = chart.bars_back)
+    
 
 
 if __name__ == "__main__":
