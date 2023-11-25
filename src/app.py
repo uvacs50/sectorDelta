@@ -263,3 +263,56 @@ def basket():
                                selected_counter = chart.counter, selected_bars_back = chart.bars_back)
     
 
+
+@app.route('/complex-basket', methods=["GET", "POST"])
+def complex_basket():
+    
+    if request.method == "GET":
+        # Create a sample DataFrame (replace this with your data)
+        # Default values or user-selected options from the form
+        default_basket_nominator = "AI"
+        default_basket_denominator = "L1"
+        default_interval = '1h'
+        default_bars_back = 200
+
+        # Initialize chart
+        chart = ComplexBasketChart(default_basket_nominator, default_basket_denominator, default_interval, default_bars_back)
+
+        # Get basket chart data
+        chart.get_complex_basket_data()
+        
+        # Get chart html
+        chart.get_chart_html()
+
+        return render_template('complex-basket.html', chart_div=chart.html, selected_basket_nominator = chart.basket_nominator, 
+                               selected_basket_denominator = chart.basket_denominator, selected_bars_back = chart.bars_back)
+    
+    else:
+
+        # Create a sample DataFrame (replace this with your data)
+        # Default values or user-selected options from the form
+        t1 = int(time.time())*1000
+
+        default_basket_nominator = "AI"
+        default_basket_denominator = "L1"
+        default_interval = '1h'
+        default_bars_back = 200
+
+        # Get user-selected options from the form
+        selected_basket_nominator = request.form.get('basket_nominator', default_basket_nominator)
+        selected_basket_denominator = request.form.get('basket_denominator', default_basket_denominator)
+        selected_interval = request.form.get('interval', default_interval)
+        selected_bars_back = int(request.form.get('bars_back', default_bars_back))
+
+        chart = ComplexBasketChart(selected_basket_nominator, selected_basket_denominator, selected_interval, selected_bars_back)
+
+        # Get basket chart data
+        chart.get_complex_basket_data()
+        
+        # Get chart html
+        chart.get_chart_html()
+
+        return render_template('complex-basket.html', chart_div=chart.html, selected_basket_nominator = chart.basket_nominator, 
+                               selected_basket_denominator = chart.basket_denominator, selected_bars_back = chart.bars_back)
+    
+
