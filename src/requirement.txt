@@ -64,3 +64,4 @@ widgetsnbextension==4.0.9
 yarl==1.9.3
 zipp==3.17.0
 gunicorn==20.1.0
+jinja-partials==0.1.1
