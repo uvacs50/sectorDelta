@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Chart
+{% endblock %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="form-container">
+            <form method="POST" action="/complex-basket">
+
+                <label for="basket_nominator">Select Basket (nominator):</label>
+                <select name="basket_nominator" id="basket_nominator">
+                    <option value="AI" {% if selected_basket == 'AI' %} selected {% endif %}>AI</option>
+                    <option value="L1" {% if selected_basket == 'L1' %} selected {% endif %}>L1</option>
+                    <option value="DEFI" {% if selected_basket == 'DEFI' %} selected {% endif %}>DEFI</option>
+                </select>
+                <label for="basket_denominator">Select Basket (denominator):</label>
+                <select name="basket_denominator" id="basket_denominator">
+                    <option value="L1" {% if selected_basket == 'L1' %} selected {% endif %}>L1</option>
+                    <option value="AI" {% if selected_basket == 'AI' %} selected {% endif %}>AI</option>
+                    <option value="DEFI" {% if selected_basket == 'DEFI' %} selected {% endif %}>DEFI</option>
+                </select>
+        
+                <label for="interval">Select Time Interval:</label>
+                <select name="interval" id="interval">
+                    <option value="15m">15 min</option>
+                    <option value="1h">1 hour</option>
+                    <option value="4h">4 hour</option>
+                    <option value="1d">1 day</option>
+                    <option value="1w">1 week</option>
+                    <!-- Add more options as needed -->
+                </select>
+        
+                <label for="bars_back">Bars Back:</label>
+                <input type="number" name="bars_back" id="bars_back" value="{{ selected_bars_back }}">
+        
+                <input type="submit" value="Generate Chart">
+            </form>
+        </div>
+        
+        <div id="chart" class="load-container">
+
+            <span class="loader"></span>
+        <div>
+    </div>
+    
+{% endblock %}

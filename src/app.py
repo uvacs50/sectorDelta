@@ -18,6 +18,9 @@ def plot_chart(df: pd.DataFrame):
     qf = cf.QuantFig(df, title="Bitcoin prices", name='BTCUSDT')
     qf.iplot()
 
+def load():
+    return render_template('loading.html')
+
 
 app = Flask(__name__)
 
@@ -159,6 +162,7 @@ def complex_basket():
 
         # Create a sample DataFrame (replace this with your data)
         # Default values or user-selected options from the form
+
         t1 = int(time.time())*1000
 
         default_basket_nominator = "AI"
@@ -172,6 +176,7 @@ def complex_basket():
         selected_interval = request.form.get('interval', default_interval)
         selected_bars_back = int(request.form.get('bars_back', default_bars_back))
 
+
         chart = ComplexBasketChart(selected_basket_nominator, selected_basket_denominator, selected_interval, selected_bars_back)
 
         # Get basket chart data
@@ -183,4 +188,11 @@ def complex_basket():
         return render_template('complex-basket.html', chart_div=chart.html, selected_basket_nominator = chart.basket_nominator, 
                                selected_basket_denominator = chart.basket_denominator, selected_bars_back = chart.bars_back)
     
+
+@app.route('/loading', methods=["GET"])
+def loading():
+
+    loading_state = load()
+
+    return loading_state
 
