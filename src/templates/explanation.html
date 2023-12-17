@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Chart
+{% endblock %}
+
+{% block main %}
+<div class="textbox">
+    <h1>Explanation</h1>
+    <p>
+        This website is a tool for traders to analyze the performance of singular assets and 
+        baskets of assets. The platform uses the Binance API to pull price data and calculate
+        synthetic tickers. This means that multiple assets are put into groups. A mathematical
+        formula is then applied on the groups to make 1 single ticker out of the groups. This
+        allows the user to analyze the performance of multiple assets at once. So far it only has 
+        cryptocurrency datapoints. In the future there may be more asset types.
+    </p>
+    <p>
+        It is very important to acknowledge correlations between assets that are in the same 
+        sector. This way you can trade a sector against another sector. The usual way a ticker
+        is represented is by a numerator and a denominator where the nominator is the asset and 
+        the denominator is USD: AAPL/USD. The value of this ticker would be given by dividing the "value"
+        of AAPl by the "value" of USD. The latter comes from DXY: The US Dollar Index. This tool will allow 
+        you to create tickers like AI / PRIVACY, which is a ticker that represents the performance of the
+        AI sector against the PRIVACY sector. Here are the different charting tools:
+    </p>
+    <ul class="explanation-list">
+        <li>
+            <h5>Simple Chart</h5>
+            <p>
+                This tool will allow you to chart any crypto currency against USD. This is the most basic tool
+                and will allow you to chart the performance of any crypto currency against USD.
+            </p>
+        </li>
+        <li>
+            <h5>Simple Basket</h5>
+            <p>
+                This tool will allow you to create a custom basket of assets and price them against 1 
+                other asset. 
+            </p>
+        </li>
+        <li>
+            <h5>Complex Basket</h5>
+            <p>
+                This tool allows you to choose 2 baskets from a list of pre-defined baskets. The tool will then
+                price the 2 baskets against each other. This tool will allow you to compare the performance of
+                2 sectors against each other.
+            </p>
+        </li>
+        <li>
+            <h5>Custom Basket</h5>
+            <p>
+                This tool allows you to create 2 custom baskets of assets and price them against each other. It also
+                has the option to save the custom basket for later use.
+            </p>
+        </li>
+        <li>
+            <h5>Saved Tickers</h5>
+            <p>
+                Here you can see all the tickers you have saved and can easily generate the chart again.
+            </p>
+        </li>
+        <li>
+            <h5>Size Calculator</h5>
+            <p>
+                This tool will allow you to calculate the sizing of your trades based on your risk tolerance. It will 
+                return a distribution of the sizing of your trades. It will tell you what tickers to take a long position 
+                in and what tickers to take a short position in and with how much size of course.
+            </p>
+
+    </ul>
+    <p>
+        This website is built as a tool and gives by no means financial advice. Don't overrisk and don't overtrade. Happy trading!
+    </p>
+    
+</div>
+{% endblock %}

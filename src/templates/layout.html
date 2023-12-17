@@ -35,10 +35,14 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/quote">Quote</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/buy">Buy</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/sell">Sell</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/chart">Simple Chart</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/basket">Basket Chart</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/complex-basket">Complex Basket Chart</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/custom-basket">Custom Basket Chart</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/saved-tickers">Saved Tickers</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/calculator">Size Calculator</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/explanation">How to use</a></li>
+
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
@@ -48,8 +52,7 @@
                             <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
                             <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
                             <li class="nav-item"><a class="nav-link" href="/chart">Simple Chart</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/basket">Basket Chart</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/complex-basket">Complex Basket Chart</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/explanation">How to use</a></li>
                         </ul>
                     {% endif %}
                 </div>
@@ -70,6 +73,7 @@
 
         <footer class="mb-5 small text-center text-muted">
             Data provided by <a href="https://binance.com/">Binance</a>
+
         </footer>
 
     </body>

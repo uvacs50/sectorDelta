@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Chart
+{% endblock %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="form-container">
+            <form method="POST" action="/custom-basket">
+
+                <div class="custom-basket">
+                    <label for="name"> Name (for saving):</label>
+                    <input type="text" name="name" id="name" placeholder="Name" value="{{selected_name}}">
+                </div>
+
+                <div class="custom-basket">
+                    <label for="basket_nominator">Input tickers (nominator):</label>
+                    <input type="text" name="basket_nominator" id="basket_nominator" placeholder="ETH, BNB, SOL" value="{{ selected_nominator }}">
+
+                    <label for="basket_denominator">Input tickers (denominator):</label>
+                    <input type="text" name="basket_denominator" id="basket_denominator" placeholder="FET, OCEAN, RLB" value="{{ selected_denominator }}">
+                    
+                </div>
+
+                
+                <label for="interval">Select Time Interval:</label>
+                <select name="interval" id="interval">
+                    <option value="15m">15 min</option>
+                    <option value="1h">1 hour</option>
+                    <option value="4h">4 hour</option>
+                    <option value="1d">1 day</option>
+                    <option value="1w">1 week</option>
+                    <!-- Add more options as needed -->
+                </select>
+        
+                <label for="bars_back">Bars Back:</label>
+                <input type="number" name="bars_back" id="bars_back" value="{{ selected_bars_back }}">
+
+                <div>
+
+                    <input class="form-check-input" type="checkbox" value="true" id="save-ticker" name="save_ticker">
+                    <label class="form-check-label" for="save-ticker">
+                        <p>Save this ticker in favorites</p>
+                    </label>
+                </div>
+                
+        
+                <input type="submit" value="Generate Chart">
+            </form>
+        </div>
+        
+        <div id="chart" class="chart-container">
+
+            <div>{{ chart_div | safe }}</div>
+
+        </div>
+        
+    </div>
+    
+{% endblock %}

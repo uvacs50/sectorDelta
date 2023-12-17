@@ -25,6 +25,12 @@
                 </select>
             
                 <input type="submit" value="Generate Chart">
+
+                <h6 class="warning">
+                    {% if not session["user_id"] %} 
+                        Log in for more chart types!
+                    {% endif %}
+                </h6>
             </form>
         </div>
         

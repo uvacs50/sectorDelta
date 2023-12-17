@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Chart
+{% endblock %}
+
+{% block main %}
+<div class="grid-container-calculator">
+    <div id="outcome" class="calculator-solution">
+        <div>
+            {{ data }}
+        </div>
+
+        {% if data_given %}
+            <h5>
+                Sizing:
+            </h5>
+            <div>
+                <ul>
+                    {% for item in long %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div>
+                <ul>
+                    {% for item in short %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div>
+                Please enter sizing parameters
+            </div>
+        {% endif %}
+
+        <div>
+            {{ risk }} USD 
+        </div>
+    </div>
+    
+
+    <div class="form-container-calculator">
+        <form method="POST" action="/calculator">
+
+            <div class="size">
+                <label for="size"> Total size:</label>
+                <input type="text" name="total_size" id="total_size" placeholder="size usd" value="{{selected_size}}">
+            </div>
+
+            <div class="custom-basket">
+                <label for="nominator_tickers">Input tickers (nominator):</label>
+                <input type="text" name="nominator_tickers" id="nominator_tickers" placeholder="ETH, BNB, SOL" value="{{ selected_nominator }}">
+
+                <label for="denominator_tickers">Input tickers (denominator):</label>
+                <input type="text" name="denominator_tickers" id="denominator_tickers" placeholder="FET, OCEAN, RLB" value="{{ selected_denominator }}">
+
+                <label for="risk">Stoploss distance (in %):</label>
+                <input type="number" name="risk" id="risk" placeholder=5 value="{{ risk }}">
+
+
+                
+            </div>
+
+    
+            <input type="submit" value="Calculate">
+        </form>
+    </div> 
+</div>
+{% endblock %}

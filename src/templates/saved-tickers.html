@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Chart
+{% endblock %}
+
+{% block main %}
+    <div class="grid-container">
+        <div class="form-container">
+            <form method="POST" action="/saved-tickers">
+
+                <div class="scrollable-list">
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>Tickers</th>
+                            <th>Select</th>
+                        </tr>
+                        {% for row in data %}
+                        <tr>
+                            <td>
+                                {{ row["name"] }}
+                        
+                            </td>
+                            <td>
+                                {{ row['nominator'] }} / {{ row['denominator'] }}
+                                
+                            </td>
+                            <td>
+                                <input type="radio" name="selectedItem" value="{{ row['id'] }}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <input type="submit" value="Generate Chart">
+            </form>
+        </div>
+        
+        <div id="chart" class="chart-container">
+
+            <div>{{ chart_div | safe }}</div>
+
+        </div>
+        
+    </div>
+    
+{% endblock %}
