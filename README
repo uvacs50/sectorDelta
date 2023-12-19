@@ -1,0 +1,31 @@
+Creator: Yessin Radouane
+Finished: 19-12-2023
+App: SectorDelta
+
+Description:
+This app can be used to create and chart synthetic tickers. This way you can explore delta neutral strategies, sector performances against other sectors and many more things. It will add a new dimension to your trading where instead of profiting if the price goes up or down, you can profit when certain sectors do better than others. This removes a big part of variance in your trading. There is a lot less randomness in markets when you are trading this way.
+There are the following Chart Types:
+
+    - Simple Chart
+    - Basket Chart
+    - Complex Basket Chart
+    - Custom Basket Chart
+
+There is also a calculator page to calculate your position sizes for the complex tickers. 
+
+
+How to use:
+Make sure you have python version 3.9 or 3.10. Then use 
+
+    pip3 install -r requirements.txt
+
+to install all the dependencies. 
+After this you can simply run the app and explore the functions. After you log in more functions will be available. 
+
+
+External sources:
+The futuristic button on the index.html page comes from: https://freefrontend.com/css-buttons/
+
+The charts are made by cufflinks library
+
+Honorable Thanks to Danian Marengo for guiding me in the process of creating a cool landing page. 

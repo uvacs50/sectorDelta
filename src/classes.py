@@ -355,7 +355,6 @@ class ComplexBasketChart:
         
         combined_df_nominator = pd.DataFrame(1, columns=data_nominator[first_in_sector_nominator].columns, index=data_nominator[first_in_sector_nominator].index)
         combined_df_denominator = pd.DataFrame(1, columns=data_denominator[first_in_sector_denominator].columns, index=data_denominator[first_in_sector_denominator].index)
-        # print(combined_df)
 
 
         # fill in the combined df for the nominator
@@ -452,7 +451,6 @@ class CustomBasketChart:
         # get data
         r = self.session.get(f"https://fapi.binance.com/fapi/v1/klines?symbol={ticker}&interval={self.interval}&limit={self.bars_back}")
         data = r.json()
-        # print(data)
 
 
         # extract necessary data
@@ -515,7 +513,6 @@ class CustomBasketChart:
         
         combined_df_nominator = pd.DataFrame(1, columns=data_nominator[first_in_sector_nominator].columns, index=data_nominator[first_in_sector_nominator].index)
         combined_df_denominator = pd.DataFrame(1, columns=data_denominator[first_in_sector_denominator].columns, index=data_denominator[first_in_sector_denominator].index)
-        # print(combined_df)
 
 
         # fill in the combined df for the nominator

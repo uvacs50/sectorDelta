@@ -1,16 +1,11 @@
-import requests
 from requests import Session
 import pandas as pd
 import cufflinks as cf
-import datetime
 from flask import Flask, request, render_template, redirect, session
 from flask_session import Session
 import jinja_partials
-import plotly.graph_objects as go
 import cufflinks as cf
-import concurrent.futures
 import os
-import time
 from classes import *
 from db.models import *
 import ast
@@ -26,7 +21,7 @@ def plot_chart(df: pd.DataFrame):
 def load():
     return render_template('loading.html')
 
-
+##### CONFIGS
 app = Flask(__name__)
 jinja_partials.register_extensions(app)
 # Check for environment variable
@@ -43,10 +38,13 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
+##### ROUTES
+
 @app.route('/', methods=["GET"])
 def index():
 
     return render_template('index.html')
+
 
 @app.route('/register', methods = ["GET", "POST"])
 def register():
@@ -71,10 +69,10 @@ def register():
         return redirect('/login')
     
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user in"""
+    """ Log user in
+        NOTE: PASSWORDS ARE NOT ENCRYPTED YET (SECURITY RISK)"""
 
     # Forget any user_id
     session.clear()
@@ -96,10 +94,6 @@ def login():
         user = User.query.filter_by(username=username).first()
 
 
-        # Ensure username exists and password is correct
-        # if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-        #     return apology("invalid username and/or password", 403)
-
         if not user or password != user.password:
             return render_template('/login.html', message = "Invalid username or password")
 
@@ -109,7 +103,7 @@ def login():
         # Redirect user to home page
         return redirect("/chart")
 
-    # User reached route via GET (as by clicking a link or via redirect)
+    
     else:
         return render_template("login.html")
     
@@ -146,8 +140,6 @@ def chart():
     
     else:
 
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
         default_ticker = "BTCUSDT"
         default_interval = '1h'
         default_bars_back = 200
@@ -174,8 +166,7 @@ def chart():
 def basket():
     
     if request.method == "GET":
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
+
         default_basket = "L1"
         default_counter = "BTCUSDT"
         default_interval = '1h'
@@ -194,10 +185,6 @@ def basket():
                                selected_counter = chart.counter, selected_bars_back = chart.bars_back)
     
     else:
-
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
-        t1 = int(time.time())*1000
 
         default_basket = "L1"
         default_counter = "BTCUSDT"
@@ -219,10 +206,6 @@ def basket():
         # Get chart html
         chart.get_chart_html()
 
-        t2 = int(time.time())*1000
-        print(f"TIME: {t2-t1}ms")
-
-
         return render_template('basket.html', chart_div=chart.html, selected_basket = chart.basket, 
                                selected_counter = chart.counter, selected_bars_back = chart.bars_back)
     
@@ -232,8 +215,7 @@ def basket():
 def complex_basket():
     
     if request.method == "GET":
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
+
         default_basket_nominator = "AI"
         default_basket_denominator = "L1"
         default_interval = '1h'
@@ -252,11 +234,6 @@ def complex_basket():
                                selected_basket_denominator = chart.basket_denominator, selected_bars_back = chart.bars_back)
     
     else:
-
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
-
-        t1 = int(time.time())*1000
 
         default_basket_nominator = "AI"
         default_basket_denominator = "L1"
@@ -290,13 +267,11 @@ def loading():
     return loading_state
 
 
-
 @app.route('/complex-basket2', methods=["GET", "POST"])
 def complex_basket2():
     
     if request.method == "GET":
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
+
         default_basket_nominator = "AI"
         default_basket_denominator = "L1"
         default_interval = '1h'
@@ -315,11 +290,6 @@ def complex_basket2():
                                selected_basket_denominator = chart.basket_denominator, selected_bars_back = chart.bars_back)
     
     else:
-
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
-
-        t1 = int(time.time())*1000
 
         default_basket_nominator = "AI"
         default_basket_denominator = "L1"
@@ -355,12 +325,6 @@ def custom_basket():
     
     else:
 
-        # Create a sample DataFrame (replace this with your data)
-        # Default values or user-selected options from the form
-
-        t1 = int(time.time())*1000
-
-
         # Get user-selected options from the form
         selected_basket_nominator = request.form.get('basket_nominator', "")
         selected_basket_denominator = request.form.get('basket_denominator', "")
@@ -377,28 +341,15 @@ def custom_basket():
 
         save = request.form.get("save_ticker", "")
 
-        print(request.form.__dict__)
-
-        print(selected_bars_back)
-        print(selected_interval)
 
         if save == 'true':
             
             ticker = Ticker(creator = session["user_id"], name = selected_name,
                             nominator = str(selected_basket_nominator), denominator = str(selected_basket_denominator), bars_back = selected_bars_back, interval = selected_interval)
-            print(ticker.__dict__)
-
             
             if ticker.name not in [t.name for t in Ticker.query.filter_by(creator=session["user_id"]).all()]:
-                print("ADDING TICKER")
                 db.session.add(ticker)
                 db.session.commit()
-
-            else: 
-                print("TICKER ALREADY EXISTS")
-
-
-
 
         chart = CustomBasketChart(selected_basket_nominator, selected_basket_denominator, 
                                   selected_name, selected_interval, 
@@ -415,7 +366,6 @@ def custom_basket():
                                 selected_bars_back = chart.bars_back)
     
 
-
 @app.route('/saved-tickers', methods=["GET", "POST"])
 def saved_tickers():
     
@@ -427,7 +377,6 @@ def saved_tickers():
 
         for ticker in fav_tickers:
             t1 = {}
-            # print(ticker.__dict__)
             t1["id"] = ticker.id
             t1['name'] = ticker.name
             t1['nominator'] = ticker.nominator
@@ -435,14 +384,13 @@ def saved_tickers():
 
             options.append(t1)
 
-            print(t1)
+            
 
         return render_template('saved-tickers.html', data = options)
     
 
     else:
 
-        print(request.form.__dict__)
         item_id = request.form.get('selectedItem', None)
 
         ticker = Ticker.query.filter_by(id=item_id).first()
@@ -452,8 +400,6 @@ def saved_tickers():
         name = ticker.name
         interval = ticker.interval
         bars_back = ticker.bars_back
-
-        
 
         chart = CustomBasketChart(nominator, denominator, 
                                   name, interval, 
@@ -469,9 +415,7 @@ def saved_tickers():
                                selected_name = name, selected_basket_denominator = denominator, 
                                 selected_bars_back = bars_back, selected_interval = interval)
         
-        # ADD unique row dentifier and push it to server. 
 
-    
 @app.route('/calculator', methods=["GET", "POST"])
 def calculator():
     
@@ -500,12 +444,7 @@ def calculator():
             short.append(f"SHORT {ticker}: {size_per_position}")
 
         riskStr = f"\n\nRISK: {risk/100 * total_size}\n"
-
-        print(nominator_tickers)
-        print(denominator_tickers)
-
         
-
         return render_template('calculator.html', data_given = True, risk = riskStr, long = long, short = short)
     
 
@@ -516,7 +455,6 @@ def explanation():
     return render_template('explanation.html')
     
     
-
 
 
 

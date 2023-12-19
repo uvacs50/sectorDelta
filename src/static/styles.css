@@ -47,7 +47,7 @@ body {
 }
 
 .chart-container {
-    /* margin-top: 5px; */
+    
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1); 
@@ -112,7 +112,7 @@ input[type="submit"]:hover {
     color:whitesmoke;
 }
 
-/* Dark-themed navigation bar */
+
 nav.border {
     background-color: #232323; 
     border-bottom: 1px solid #444;
@@ -149,7 +149,7 @@ nav.border {
     color: #33ebff; 
 }
 
-/* User-specific menu items */
+
 .navbar-nav.me-auto .nav-item,
 .navbar-nav.ms-auto .nav-item {
     margin-right: 15px;
